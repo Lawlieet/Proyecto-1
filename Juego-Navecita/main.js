@@ -8,6 +8,7 @@ let nave = {
     y: canvas.height - 100,
     width: 50,
     height: 50,
+    contador: 0,
 
 }
 
@@ -35,14 +36,19 @@ let enemigos = []
 //Instancia un nuevo fondo el cual pasa a cargar la imagen
 
 let fondo;
+//let imagenes = ['./nave1.png', './enemigo1.png', './enemigo2.png', './bg1.png', './laser.png', './laser2.png']
+let preloader;
 
-function loadMedia() {
+function loadMedia(){
     fondo = new Image()
-    fondo.src = 'bg1.png';
-    fondo.onload = function () {
-        let intervalo = window.setInterval(frameLoop, 1000 / 55)
+    fondo.src = './bg1.png';
+    fondo.onload = function(){
+        let intervalo = window.setInterval(frameLoop,1000/55)
     }
 }
+
+
+
 
 //se encarga de dibujar a los enemigos bueno darlesun color el cual deuna forma estan de un color y luego otroaunque falta  modificar porque no se arreglo
 function enemigosDibujados() {
@@ -135,9 +141,22 @@ function moverNave() {
         } else {
             teclado.fire = false
         }
+        
+        if (nave.estado == "hitBox") {
+            nave.contador++
+            if (nave.contador >= 20) {
+                nave.contador = 0
+                nave.estado = 'muerto'
+                game.estado = 'perdido'
+                mensaje.titulo = 'GAME OVER!!'
+                mensaje.subtitulo = 'Press R --- Restart'
+                mensaje.contador = 0;
+            }
+        }
 
 
     }
+
 
 }
 //Dibujar disparos de los enemigos contienen el color de los enemigos bueno los disparo
@@ -216,7 +235,7 @@ function nuevosEnemigos() {
 
         if (enemigo && enemigo.estado == 'hitBox') {
             enemigo.contador++;
-            if (enemigo.contador >= 25) {
+            if (enemigo.contador >= 10) {
                 enemigo.estado = 'muerto'
                 enemigo.contador = 0
             }
@@ -317,7 +336,12 @@ function estadoDelJuego() {
     if (mensaje.contador >= 0) {
         mensaje.contador++
     }
+    if ((game.estado == 'perdido' || game.estado == 'victoria') && teclado[82]) {
+        game.estado = 'inicio';
+        nave.estado = 'vivo'
+        mensaje.contador = -1
 
+    }
 }
 
 
@@ -416,5 +440,12 @@ function frameLoop() {
 }
 
 //SE llama al fla funcion fondo y al evento del teclado que este es el encargado de manejar que tecla se esta marcando
-loadMedia();
-agregarEventosTeclado();
+
+
+    
+window.addEventListener('load',init) 
+function init() {
+        loadMedia();
+        agregarEventosTeclado();
+
+    }
