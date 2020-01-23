@@ -19,8 +19,11 @@ let game = {
 let mensaje = {
     contador: -1,
     titulo: '',
-    subtitulo: ''
+    subtitulo: '',
+    scoreTotal:''
 }
+
+let score = 0;
 
 let navecita;
 let enemigoNave;
@@ -41,102 +44,65 @@ let enemigos = []
 //Instancia un nuevo fondo el cual pasa a cargar la imagen
 
 let fondo;
-let imagenes = ['./nave1.png', './enemigo1.png', './enemigo2.png', './bg1.png', './laser.png', './laser2.png']
+let imagenes = ['./nave1.png', './enemigo2.png', './enemigo2.png', './bg1.png', './laser.png', './laser2.png']
 let musicDisparo;
 let musicDisparoEnemigo;
 let musicInicio;
 let musicEnd;
-<<<<<<< HEAD
 let musicEndEnemi;
-=======
->>>>>>> 28953049a74b56cf4487c0c72d632f283d9a07c1
 
-let preloader;
+let load;
 
-function loadMedia(){
-<<<<<<< HEAD
-   
-    preloader = new PreloadJS();
-    preloader.onProgress = progresoCarga;
+function loadMedia() {
+
+    load = new PreloadJS();
+    load.onProgress = progresoCarga;
     cargar()
-=======
-    preloader = new PreloadJS();
-preloader.onProgress = progresoCarga;
-cargar()
-
->>>>>>> 28953049a74b56cf4487c0c72d632f283d9a07c1
 }
-function cargar(){
-    while(imagenes.length > 0){
+
+function cargar() {
+    while (imagenes.length > 0) {
         let imagen = imagenes.shift();
-        preloader.loadFile(imagen);
+        load.loadFile(imagen);
     }
 }
 
-function progresoCarga(){
-<<<<<<< HEAD
-    
-
-   
-        let interval = window.setInterval(frameLoop,1000/5)
-        fondo = new Image();
-        fondo.src ='./images/bg1.png'
-
-        navecita = new Image();
-        navecita.src ='./images/nave1.png'
-
-        enemigoNave = new Image();
-        enemigoNave.src ='./images/enemigo1.png'
-
-        rashoLaser = new Image();
-        rashoLaser.src ='./images/laser2.png'
-
-        rashoLaser2 = new Image();
-        rashoLaser2.src ='./images/laserEnemigo.png'
-
-        musicDisparo = document.createElement('audio')
-        document.body.appendChild(musicDisparo);
-        musicDisparo.setAttribute('src','./sonidos/sonidoDisparo.mp3')
-
-        musicDisparoEnemigo = document.createElement('audio')
-        document.body.appendChild(musicDisparoEnemigo);
-        musicDisparoEnemigo.setAttribute('src','./sonidos/sonidoDisparoenemigo.wav')
-
-        musicEnd = document.createElement('audio');
-        document.body.appendChild(musicEnd);
-        musicEnd.setAttribute('src','./sonidos/gameOver.mp3')
-
-        musicEndEnemi = document.createElement('audio');
-        document.body.appendChild(musicEndEnemi);
-        musicEndEnemi.setAttribute('src','./sonidos/muerteEnemigo.wav')
-        
-=======
-    // console.log(parseInt(preloader.progress * 100)+"%")
-    // if(preloader.progress == 1){
-
-    
-        let interval = window.setInterval(frameLoop,1000/5)
-        fondo = new Image();
-        fondo.src ='./bg1.png'
-
-        navecita = new Image();
-        navecita.src ='./nave1.png'
-
-        enemigoNave = new Image();
-        enemigoNave.src ='./enemigo1.png'
-
-        rashoLaser = new Image();
-        rashoLaser.src ='./laser2.png'
-
-        rashoLaser2 = new Image();
-        rashoLaser2.src ='./laserEnemigo.png'
-
-        musicDisparo = document.createElement('audio')
-        document.body.appendChild(musicDisparo);
-        musicDisparo.setAttribute('src','sonidoDisparo')
+function progresoCarga() {
 
 
->>>>>>> 28953049a74b56cf4487c0c72d632f283d9a07c1
+
+    let interval = window.setInterval(frameLoop, 1000 / 5)
+    fondo = new Image();
+    fondo.src = './images/bg1.png'
+
+    navecita = new Image();
+    navecita.src = './images/nave1.png'
+
+    enemigoNave = new Image();
+    enemigoNave.src = './images/enemigo2.png'
+
+    rashoLaser = new Image();
+    rashoLaser.src = './images/laser2.png'
+
+    rashoLaser2 = new Image();
+    rashoLaser2.src = './images/laserEnemigo.png'
+
+    musicDisparo = document.createElement('audio')
+    document.body.appendChild(musicDisparo);
+    musicDisparo.setAttribute('src', './sonidos/sonidoDisparo.mp3')
+
+    musicDisparoEnemigo = document.createElement('audio')
+    document.body.appendChild(musicDisparoEnemigo);
+    musicDisparoEnemigo.setAttribute('src', './sonidos/sonidoDisparoenemigo.wav')
+
+    musicEnd = document.createElement('audio');
+    document.body.appendChild(musicEnd);
+    musicEnd.setAttribute('src', './sonidos/gameOver.mp3')
+
+    musicEndEnemi = document.createElement('audio');
+    document.body.appendChild(musicEndEnemi);
+    musicEndEnemi.setAttribute('src', './sonidos/muerteEnemigo.wav')
+
 
 
     //}
@@ -156,7 +122,7 @@ function enemigosDibujados() {
         if (enemigo.estado == "muerto") {
             ctx.fillStyle = "orange"
         }
-        ctx.drawImage(enemigoNave,enemigo.x, enemigo.y, enemigo.width, enemigo.height)
+        ctx.drawImage(enemigoNave, enemigo.x, enemigo.y, enemigo.width, enemigo.height)
     }
 }
 
@@ -174,7 +140,7 @@ function dibujarFondo() {
 function dibujarNave() {
     ctx.save();
     //Cuadrotp guia ctx.fillStyle = "white"
-    ctx.drawImage(navecita,nave.x, nave.y, nave.width, nave.height)
+    ctx.drawImage(navecita, nave.x, nave.y, nave.width, nave.height)
     ctx.restore()
 }
 
@@ -211,14 +177,14 @@ function agregarEventosTeclado() {
 
 
 function moverNave() {
-    if (teclado[65]) {
+    if (teclado[37]) {
         //move left
         nave.x -= 6;
 
         if (nave.x < 0) nave.x = 0
     }
 
-    if (teclado[68]) {
+    if (teclado[39]) {
         //mov rigth
         let limite = canvas.width - nave.width;
         nave.x += 6;
@@ -228,30 +194,25 @@ function moverNave() {
         }
     }
 
-    if (teclado[87]) {
+    if (teclado[32]) {
         //Los disparo estan bien locos si se tocaba una vez la barra troanaba
         if (!teclado.fire) {
             fire()
             teclado.fire = true
-<<<<<<< HEAD
         }
-=======
-        } 
->>>>>>> 28953049a74b56cf4487c0c72d632f283d9a07c1
-    }    
-
-    else teclado.fire = false;
-        if (nave.estado == "hitBox") {
-            nave.contador++
-            if (nave.contador >= 20) {
-                nave.contador = 0
-                nave.estado = 'muerto'
-                game.estado = 'perdido'
-                mensaje.titulo = '¡¡-GAME OVER-!!'
-                mensaje.subtitulo = 'Press R to Restart'
-                mensaje.contador = 0;
-            }
+    } else teclado.fire = false;
+    if (nave.estado == "hitBox") {
+        nave.contador++
+        if (nave.contador >= 20) {
+            nave.contador = 0
+            nave.estado = 'muerto'
+            game.estado = 'perdido'
+            mensaje.titulo = '¡¡-GAME OVER-!!'
+            mensaje.subtitulo = 'Press R to Restart'
+            mensaje.contador = 0;
+            mensaje.scoreTotal = `Score; ${score}`
         }
+    }
 
 
 }
@@ -263,7 +224,7 @@ function dibujarDisparosEnemigos() {
         let disparo = disparosEnemigos[i];
         ctx.save();
         ctx.fillStyle = "blue "
-        ctx.drawImage(rashoLaser2,disparo.x, disparo.y, disparo.width, disparo.height)
+        ctx.drawImage(rashoLaser2, disparo.x, disparo.y, disparo.width, disparo.height)
         ctx.restore()
 
     }
@@ -303,14 +264,15 @@ function nuevosEnemigos() {
     //Aqui se crean los enemigos necesito ver como aumentarlos
     if (game.estado == 'inicio') {
 
-        for (let i = 0; i < 10; i++) {
+        for (let i = 0; i < 15; i++) {
             enemigos.push({
                 x: 10 + (i * 50),
                 y: 10,
                 height: 40,
                 width: 40,
                 estado: 'vivo',
-                contador: 0
+                contador: 0,
+                i : i+10
             });
         }
 
@@ -323,25 +285,17 @@ function nuevosEnemigos() {
         if (!enemigo) continue;
         if (enemigo && enemigo.estado == "vivo") {
             enemigo.contador++;
-            enemigo.x += Math.sin(enemigo.contador * Math.PI / 90) * 5;
+            enemigo.x += Math.sin(enemigo.contador * Math.PI / 30) * 2;
 
-<<<<<<< HEAD
             //Funcion aleatoria que aroja un random de los disparos
-=======
-            //Funcion aleatoria que aroja un random de los disparos 
->>>>>>> 28953049a74b56cf4487c0c72d632f283d9a07c1
             //Es rara porque si se aumenta mucho se convierte en un bullethell
 
             if (aleatorio(0, enemigos.length * 10) == 4) {
 
-//Falta agregar de igual forma y buscar un audio para el disparo del enemigo                
-<<<<<<< HEAD
-            musicDisparoEnemigo.pause();
-            musicDisparoEnemigo.currentTime = 0;
-            musicDisparoEnemigo.play();
-=======
-
->>>>>>> 28953049a74b56cf4487c0c72d632f283d9a07c1
+                //Falta agregar de igual forma y buscar un audio para el disparo del enemigo                
+                musicDisparoEnemigo.pause();
+                musicDisparoEnemigo.currentTime = 0;
+                musicDisparoEnemigo.play();
 
                 disparosEnemigos.push(agregarDisparosEnemigos(enemigo))
             }
@@ -386,15 +340,9 @@ function moverDisparos() {
 //
 function fire() {
     //Falta agregar y buscar el sonidos
-<<<<<<< HEAD
-     musicDisparo.pause();
-     musicDisparo.currentTime = 0;
-     musicDisparo.play();
-=======
-    // musicDisparo.pause();
-    // musicDisparo.currentTime = 0;
-    // musicDisparo.play();
->>>>>>> 28953049a74b56cf4487c0c72d632f283d9a07c1
+    musicDisparo.pause();
+    musicDisparo.currentTime = 0;
+    musicDisparo.play();
     disparos.push({
         x: nave.x + 20,
         y: nave.y - 10,
@@ -411,7 +359,7 @@ function dibujarDisparos() {
     ctx.fillStyle = "white"
     for (let i in disparos) {
         let disparo = disparos[i]
-        ctx.drawImage(rashoLaser,disparo.x, disparo.y, disparo.width, disparo.height)
+        ctx.drawImage(rashoLaser, disparo.x, disparo.y, disparo.width, disparo.height)
     }
 
     ctx.restore();
@@ -419,11 +367,7 @@ function dibujarDisparos() {
 
 function dibujarTexto() {
     if (mensaje.contador == -1) return;
-<<<<<<< HEAD
-//El alfa ayuuda a que el texto simule un difuminado
-=======
-//El alfa ayuuda a que el texto simule un difuminado 
->>>>>>> 28953049a74b56cf4487c0c72d632f283d9a07c1
+    //El alfa ayuuda a que el texto simule un difuminado
     let alpha = mensaje.contador / 50.0
 
     if (alpha > 1) {
@@ -432,26 +376,37 @@ function dibujarTexto() {
         }
     }
     ctx.save()
-//https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/globalAlpha    
+    //https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/globalAlpha    
     ctx.globalAlpha = alpha;
     if (game.estado == 'perdido') {
         ctx.fillStyle = 'white'
         ctx.font = '50pt Arial';
-        ctx.fillText(mensaje.titulo, 150, 250)
+        ctx.fillText(mensaje.titulo, 50, 75)
         ctx.font = ' 20pt Arial';
-        ctx.fillText(mensaje.subtitulo, 200, 350)
+        ctx.fillText(mensaje.subtitulo, 200, 125)
+        ctx.font = ' 30pt Arial';
+        ctx.fillText(mensaje.scoreTotal, 200, 175)
     }
 
     if (game.estado == 'victoria') {
         ctx.fillStyle = 'white'
         ctx.font = '50pt Arial-Black';
-        ctx.fillText(mensaje.titulo, 150, 250)
+        ctx.fillText(mensaje.titulo, 50, 75)
         ctx.font = ' 30pt Arial';
-        ctx.fillText(mensaje.subtitulo, 200, 350)
+        ctx.fillText(mensaje.subtitulo, 200, 125)
+        ctx.font = ' 30pt Arial';
+        ctx.fillText(mensaje.scoreTotal, 200, 175)
+
     }
 
 
 }
+
+// function drawScore() {
+//     ctx.font = "25px Arial"
+//     ctx.fillStyle = " #bada55"
+//     ctx.fillText(`Score: ${score}`, 40, canvas.width-50)
+// }
 
 
 function estadoDelJuego() {
@@ -461,6 +416,7 @@ function estadoDelJuego() {
         mensaje.titulo = "Destruiste la Flota"
         mensaje.subtitulo = "Press R"
         mensaje.contador = 0;
+        mensaje.scoreTotal = `Score: ${score}`
     }
     if (mensaje.contador >= 0) {
         mensaje.contador++
@@ -469,6 +425,7 @@ function estadoDelJuego() {
         game.estado = 'inicio';
         nave.estado = 'vivo'
         mensaje.contador = -1
+        score = 0;
 
     }
 }
@@ -479,7 +436,7 @@ function hitBox(a, b) {
 
     //     if( a.x < a.x + a.width &&a.x + a.width > a.x &&b.y < b.y + b.height &&b.height + b.y > b.y  console.log("colicion")
     //   return hitBox
-   
+
     //col vertical
     if (b.x + b.width >= a.x && b.x < a.x + a.width) {
         //coll horizontal  
@@ -497,9 +454,9 @@ function hitBox(a, b) {
 
     if (a.x <= b.x && a.x + a.width >= b.x + b.width) {
         if (a.y <= b.y && a.y + a.height >= b.y + b.height) {
-        hitBox = true
+            hitBox = true
+        }
     }
-}
 
     return hitBox
 
@@ -518,56 +475,48 @@ function verificarContacto() {
         for (j in enemigos) {
             let enemigo = enemigos[j];
             if (hitBox(disparo, enemigo)) {
-<<<<<<< HEAD
-               
-                
+
                 musicEndEnemi.currentTime = 0;
                 musicEndEnemi.play();
-                
-            
-               
-=======
-                
-//De igual forma falta agregar el auidio de colision con el enemigo                
-                
->>>>>>> 28953049a74b56cf4487c0c72d632f283d9a07c1
+
+                //SCORE  
+                score++;
                 enemigo.estado = 'hitBox'
                 enemigo.contador = 0;
-                console.log('contato cn el pinche nave espero que ahora si')
+
+
+
+
+
+
+                //console.log('contato cn el pinche nave espero que ahora si')
             }
         }
 
     }
 
-    if (nave.estado == "hitBox" || nave.estado == "muerto") {return;}
+    if (nave.estado == "hitBox" || nave.estado == "muerto") {
+       
+        return;
+    }
     for (let i in disparosEnemigos) {
         let disparo = disparosEnemigos[i];
         if (hitBox(disparo, nave)) {
 
-<<<<<<< HEAD
             musicEnd.currentTime = 0;
             musicEnd.play();
 
 
-//Falta agregar el sonido de la nave muriendo            
+            //Falta agregar el sonido de la nave muriendo            
             nave.estado = "hitBox";
-           
-=======
 
-//Falta agregar el sonido de la nave muriendo            
-            nave.estado = "hitBox";
-            
->>>>>>> 28953049a74b56cf4487c0c72d632f283d9a07c1
+
         }
     }
 
 }
 
-<<<<<<< HEAD
 //Esta la encontre en un foro
-=======
-//Esta la encontre en un foro 
->>>>>>> 28953049a74b56cf4487c0c72d632f283d9a07c1
 function aleatorio(inferior, superior) {
 
     let disparoPosible = superior - inferior
@@ -587,6 +536,7 @@ function frameLoop() {
     enemigosDibujados();
     dibujarDisparosEnemigos();
     dibujarDisparos();
+    //drawScore();
     dibujarTexto();
     dibujarNave();
 
@@ -595,10 +545,19 @@ function frameLoop() {
 //SE llama al fla funcion fondo y al evento del teclado que este es el encargado de manejar que tecla se esta marcando
 
 
-   
-window.addEventListener('load',init) 
-function init() {
-        agregarEventosTeclado();
-        loadMedia();
-    }
 
+window.addEventListener('load', init)
+
+function init() {
+    agregarEventosTeclado();
+    loadMedia();
+}
+
+
+document.querySelector('button').onclick = () => {
+    if (canvas.webkitRequestFullScreen) {
+      canvas.webkitRequestFullScreen()
+    } else {
+      canvas.mozRequestFullScreen()
+    }
+  }
