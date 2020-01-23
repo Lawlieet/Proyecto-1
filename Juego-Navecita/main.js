@@ -22,6 +22,11 @@ let mensaje = {
     subtitulo: ''
 }
 
+let navecita;
+let enemigoNave;
+let rashoLaser;
+let rashoLaser2;
+
 //Definir el movimiento por teclado sin ningun parametro
 let teclado = {}
 
@@ -36,15 +41,67 @@ let enemigos = []
 //Instancia un nuevo fondo el cual pasa a cargar la imagen
 
 let fondo;
-//let imagenes = ['./nave1.png', './enemigo1.png', './enemigo2.png', './bg1.png', './laser.png', './laser2.png']
+let imagenes = ['./nave1.png', './enemigo1.png', './enemigo2.png', './bg1.png', './laser.png', './laser2.png']
+let musicDisparo;
+let musicDisparoEnemigo;
+let musicInicio;
+let musicEnd;
+let musicEndEnemi;
+
 let preloader;
 
 function loadMedia(){
-    fondo = new Image()
-    fondo.src = './bg1.png';
-    fondo.onload = function(){
-        let intervalo = window.setInterval(frameLoop,1000/55)
+   
+    preloader = new PreloadJS();
+    preloader.onProgress = progresoCarga;
+    cargar()
+}
+function cargar(){
+    while(imagenes.length > 0){
+        let imagen = imagenes.shift();
+        preloader.loadFile(imagen);
     }
+}
+
+function progresoCarga(){
+    
+
+   
+        let interval = window.setInterval(frameLoop,1000/5)
+        fondo = new Image();
+        fondo.src ='./images/bg1.png'
+
+        navecita = new Image();
+        navecita.src ='./images/nave1.png'
+
+        enemigoNave = new Image();
+        enemigoNave.src ='./images/enemigo1.png'
+
+        rashoLaser = new Image();
+        rashoLaser.src ='./images/laser2.png'
+
+        rashoLaser2 = new Image();
+        rashoLaser2.src ='./images/laserEnemigo.png'
+
+        musicDisparo = document.createElement('audio')
+        document.body.appendChild(musicDisparo);
+        musicDisparo.setAttribute('src','./sonidos/sonidoDisparo.mp3')
+
+        musicDisparoEnemigo = document.createElement('audio')
+        document.body.appendChild(musicDisparoEnemigo);
+        musicDisparoEnemigo.setAttribute('src','./sonidos/sonidoDisparoenemigo.wav')
+
+        musicEnd = document.createElement('audio');
+        document.body.appendChild(musicEnd);
+        musicEnd.setAttribute('src','./sonidos/gameOver.mp3')
+
+        musicEndEnemi = document.createElement('audio');
+        document.body.appendChild(musicEndEnemi);
+        musicEndEnemi.setAttribute('src','./sonidos/muerteEnemigo.wav')
+        
+
+
+    //}
 }
 
 
@@ -61,7 +118,7 @@ function enemigosDibujados() {
         if (enemigo.estado == "muerto") {
             ctx.fillStyle = "orange"
         }
-        ctx.fillRect(enemigo.x, enemigo.y, enemigo.width, enemigo.height)
+        ctx.drawImage(enemigoNave,enemigo.x, enemigo.y, enemigo.width, enemigo.height)
     }
 }
 
@@ -72,20 +129,20 @@ function dibujarFondo() {
 }
 
 //Funcion que dibuja la nave
-//Recordatorio se marca solo con un recuadro de color blanco 
+//Recordatorio se marca solo con un recuadro de color blanco
 //Para evitar problemas de no mostrar la imagen
 //https://developer.mozilla.org/es/docs/Web/API/CanvasRenderingContext2D/save
 
 function dibujarNave() {
     ctx.save();
-    ctx.fillStyle = "white"
-    ctx.fillRect(nave.x, nave.y, nave.width, nave.height)
+    //Cuadrotp guia ctx.fillStyle = "white"
+    ctx.drawImage(navecita,nave.x, nave.y, nave.width, nave.height)
     ctx.restore()
 }
 
 
 //Se declara la funcion la cual guardara el evento del teclado solo movimiento
-//Se define por dentro aregar enevtnto el cual reconocera el keydown y up 
+//Se define por dentro aregar enevtnto el cual reconocera el keydown y up
 //https://developer.mozilla.org/es/docs/Web/API/Element/keydown_event  /https://developer.mozilla.org/es/docs/Web/API/Document/keyup_event
 
 function agregarEventosTeclado() {
@@ -100,8 +157,8 @@ function agregarEventosTeclado() {
     })
 
     //Se crea la funcion agregarEvento el cual recibe tres parametros
-    //Elemeto = document , nombreEvento = keydown y keyup y funcion =  e 
-    //Si el addEventListener es = True  retorna el eveneto de la tecla pesionada dicha tecla  se define en una funcion 
+    //Elemeto = document , nombreEvento = keydown y keyup y funcion =  e
+    //Si el addEventListener es = True  retorna el eveneto de la tecla pesionada dicha tecla  se define en una funcion
     //La cual le damos el movimiento de izq y derecha
     function agregarEvento(elemento, nombreEvento, funcion) {
         if (elemento.addEventListener) {
@@ -125,7 +182,7 @@ function moverNave() {
 
     if (teclado[39]) {
         //mov rigth
-        let limite = canvas.width - 50;
+        let limite = canvas.width - nave.width;
         nave.x += 6;
         //move r
         if (nave.x > limite) {
@@ -138,24 +195,21 @@ function moverNave() {
         if (!teclado.fire) {
             fire()
             teclado.fire = true
-        } else {
-            teclado.fire = false
         }
-        
+    }    
+
+    else teclado.fire = false;
         if (nave.estado == "hitBox") {
             nave.contador++
             if (nave.contador >= 20) {
                 nave.contador = 0
                 nave.estado = 'muerto'
                 game.estado = 'perdido'
-                mensaje.titulo = 'GAME OVER!!'
-                mensaje.subtitulo = 'Press R --- Restart'
+                mensaje.titulo = '¡¡-GAME OVER-!!'
+                mensaje.subtitulo = 'Press R to Restart'
                 mensaje.contador = 0;
             }
         }
-
-
-    }
 
 
 }
@@ -167,7 +221,7 @@ function dibujarDisparosEnemigos() {
         let disparo = disparosEnemigos[i];
         ctx.save();
         ctx.fillStyle = "blue "
-        ctx.fillRect(disparo.x, disparo.y, disparo.width, disparo.height)
+        ctx.drawImage(rashoLaser2,disparo.x, disparo.y, disparo.width, disparo.height)
         ctx.restore()
 
     }
@@ -180,6 +234,8 @@ function moverDisparosEnemigos() {
         let disparo = disparosEnemigos[i];
         disparo.y += 3
     }
+    //Si el disparo es mayor que el canvas el disparo se elimina
+    //lo que comento Joss para que no se quede en un ciclo y se sobre carge o alente el navegador
     disparosEnemigos = disparosEnemigos.filter(function (disparo) {
         return disparo.y < canvas.height
 
@@ -197,11 +253,12 @@ function nuevosEnemigos() {
         return {
             x: enemigo.x,
             y: enemigo.y,
-            width: 15,
-            height: 40,
+            width: 10,
+            height: 30,
             contador: 0,
         }
     }
+    //Aqui se crean los enemigos necesito ver como aumentarlos
     if (game.estado == 'inicio') {
 
         for (let i = 0; i < 10; i++) {
@@ -226,16 +283,23 @@ function nuevosEnemigos() {
             enemigo.contador++;
             enemigo.x += Math.sin(enemigo.contador * Math.PI / 90) * 5;
 
-            //Funcion aleatoria que aroja un random de los disparos 
+            //Funcion aleatoria que aroja un random de los disparos
+            //Es rara porque si se aumenta mucho se convierte en un bullethell
 
             if (aleatorio(0, enemigos.length * 10) == 4) {
+
+//Falta agregar de igual forma y buscar un audio para el disparo del enemigo                
+            musicDisparoEnemigo.pause();
+            musicDisparoEnemigo.currentTime = 0;
+            musicDisparoEnemigo.play();
+
                 disparosEnemigos.push(agregarDisparosEnemigos(enemigo))
             }
         }
 
         if (enemigo && enemigo.estado == 'hitBox') {
             enemigo.contador++;
-            if (enemigo.contador >= 10) {
+            if (enemigo.contador >= 20) {
                 enemigo.estado = 'muerto'
                 enemigo.contador = 0
             }
@@ -271,8 +335,12 @@ function moverDisparos() {
 //Si disparo persiste saliendo del Eje y puede ocacionar una sobre carga ya que el elemento aun seguiriai ejecutandose
 //
 function fire() {
+    //Falta agregar y buscar el sonidos
+     musicDisparo.pause();
+     musicDisparo.currentTime = 0;
+     musicDisparo.play();
     disparos.push({
-        x: nave.x - 20,
+        x: nave.x + 20,
         y: nave.y - 10,
         width: 10,
         height: 30
@@ -287,7 +355,7 @@ function dibujarDisparos() {
     ctx.fillStyle = "white"
     for (let i in disparos) {
         let disparo = disparos[i]
-        ctx.fillRect(disparo.x, disparo.y, disparo.width, disparo.height)
+        ctx.drawImage(rashoLaser,disparo.x, disparo.y, disparo.width, disparo.height)
     }
 
     ctx.restore();
@@ -295,7 +363,7 @@ function dibujarDisparos() {
 
 function dibujarTexto() {
     if (mensaje.contador == -1) return;
-
+//El alfa ayuuda a que el texto simule un difuminado
     let alpha = mensaje.contador / 50.0
 
     if (alpha > 1) {
@@ -304,21 +372,22 @@ function dibujarTexto() {
         }
     }
     ctx.save()
-    ctx.globalAlpha = alpha
+//https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/globalAlpha    
+    ctx.globalAlpha = alpha;
     if (game.estado == 'perdido') {
         ctx.fillStyle = 'white'
-        ctx.font = 'bold 50pt Arial';
-        ctx.fillText(mensaje.titulo, 140, 200)
-        ctx.font = ' 30pt Arial';
-        ctx.fillText(mensaje.subtitulo, 140, 250)
+        ctx.font = '50pt Arial';
+        ctx.fillText(mensaje.titulo, 150, 250)
+        ctx.font = ' 20pt Arial';
+        ctx.fillText(mensaje.subtitulo, 200, 350)
     }
 
     if (game.estado == 'victoria') {
         ctx.fillStyle = 'white'
         ctx.font = '50pt Arial-Black';
-        ctx.fillText(mensaje.titulo, 140, 200)
+        ctx.fillText(mensaje.titulo, 150, 250)
         ctx.font = ' 30pt Arial';
-        ctx.fillText(mensaje.subtitulo, 140, 250)
+        ctx.fillText(mensaje.subtitulo, 200, 350)
     }
 
 
@@ -329,7 +398,7 @@ function estadoDelJuego() {
     if (game.estado == 'jugando' && enemigos.length == 0) {
 
         game.estado = 'victoria'
-        mensaje.titulo = "Destruiste la flota del MAL"
+        mensaje.titulo = "Destruiste la Flota"
         mensaje.subtitulo = "Press R"
         mensaje.contador = 0;
     }
@@ -346,18 +415,11 @@ function estadoDelJuego() {
 
 
 function hitBox(a, b) {
-    let hitBox = false
+    let hitBox = false;
 
-    //     if( a.x < a.x + a.width &&
-    //         a.x + a.width > a.x &&
-
-    //         b.y < b.y + b.height &&
-    //         b.height + b.y > b.y
-    //     ){
-    //             console.log("colicion")
-    //             return hitBox
-    //     }
-
+    //     if( a.x < a.x + a.width &&a.x + a.width > a.x &&b.y < b.y + b.height &&b.height + b.y > b.y  console.log("colicion")
+    //   return hitBox
+   
     //col vertical
     if (b.x + b.width >= a.x && b.x < a.x + a.width) {
         //coll horizontal  
@@ -374,9 +436,10 @@ function hitBox(a, b) {
     }
 
     if (a.x <= b.x && a.x + a.width >= b.x + b.width) {
-        if (a.y <= b.y && a.y + a.height >= b.y + b.height) {}
-
+        if (a.y <= b.y && a.y + a.height >= b.y + b.height) {
+        hitBox = true
     }
+}
 
     return hitBox
 
@@ -395,26 +458,39 @@ function verificarContacto() {
         for (j in enemigos) {
             let enemigo = enemigos[j];
             if (hitBox(disparo, enemigo)) {
+               
+                
+                musicEndEnemi.currentTime = 0;
+                musicEndEnemi.play();
+                
+            
+               
                 enemigo.estado = 'hitBox'
                 enemigo.contador = 0;
-                console.log('contato con el pinche nave espero que ahora si')
+                console.log('contato cn el pinche nave espero que ahora si')
             }
         }
 
     }
 
-    if (nave.estado == "hitBox" || nave.estado == "muerto") return
+    if (nave.estado == "hitBox" || nave.estado == "muerto") {return;}
     for (let i in disparosEnemigos) {
         let disparo = disparosEnemigos[i];
         if (hitBox(disparo, nave)) {
-            nave.estado = "hitBox";
 
+            musicEnd.currentTime = 0;
+            musicEnd.play();
+
+
+//Falta agregar el sonido de la nave muriendo            
+            nave.estado = "hitBox";
+           
         }
     }
 
 }
 
-
+//Esta la encontre en un foro
 function aleatorio(inferior, superior) {
 
     let disparoPosible = superior - inferior
@@ -426,8 +502,8 @@ function aleatorio(inferior, superior) {
 function frameLoop() {
     estadoDelJuego();
     moverNave();
-    moverDisparosEnemigos();
     moverDisparos();
+    moverDisparosEnemigos();
     dibujarFondo();
     verificarContacto();
     nuevosEnemigos();
@@ -442,10 +518,10 @@ function frameLoop() {
 //SE llama al fla funcion fondo y al evento del teclado que este es el encargado de manejar que tecla se esta marcando
 
 
-    
+   
 window.addEventListener('load',init) 
 function init() {
-        loadMedia();
         agregarEventosTeclado();
-
+        loadMedia();
     }
+
