@@ -116,16 +116,16 @@ function agregarEventosTeclado() {
 
 
 function moverNave() {
-    if (teclado[37]) {
+    if (teclado[65]) {
         //move left
         nave.x -= 6;
 
         if (nave.x < 0) nave.x = 0
     }
 
-    if (teclado[39]) {
+    if (teclado[68]) {
         //mov rigth
-        let limite = canvas.width - 50;
+        let limite = canvas.width - nave.width;
         nave.x += 6;
         //move r
         if (nave.x > limite) {
@@ -133,29 +133,26 @@ function moverNave() {
         }
     }
 
-    if (teclado[32]) {
+    if (teclado[87]) {
         //Los disparo estan bien locos si se tocaba una vez la barra troanaba
         if (!teclado.fire) {
             fire()
             teclado.fire = true
-        } else {
-            teclado.fire = false
-        }
-        
+        } 
+    }    
+
+    else teclado.fire = false;
         if (nave.estado == "hitBox") {
             nave.contador++
             if (nave.contador >= 20) {
                 nave.contador = 0
                 nave.estado = 'muerto'
                 game.estado = 'perdido'
-                mensaje.titulo = 'GAME OVER!!'
-                mensaje.subtitulo = 'Press R --- Restart'
+                mensaje.titulo = '¡¡-GAME OVER-!!'
+                mensaje.subtitulo = 'Press R to Restart'
                 mensaje.contador = 0;
             }
         }
-
-
-    }
 
 
 }
@@ -180,6 +177,8 @@ function moverDisparosEnemigos() {
         let disparo = disparosEnemigos[i];
         disparo.y += 3
     }
+    //Si el disparo es mayor que el canvas el disparo se elimina
+    //lo que comento Joss para que no se quede en un ciclo y se sobre carge o alente el navegador
     disparosEnemigos = disparosEnemigos.filter(function (disparo) {
         return disparo.y < canvas.height
 
@@ -197,11 +196,12 @@ function nuevosEnemigos() {
         return {
             x: enemigo.x,
             y: enemigo.y,
-            width: 15,
-            height: 40,
+            width: 10,
+            height: 30,
             contador: 0,
         }
     }
+    //Aqui se crean los enemigos necesito ver como aumentarlos
     if (game.estado == 'inicio') {
 
         for (let i = 0; i < 10; i++) {
@@ -227,6 +227,7 @@ function nuevosEnemigos() {
             enemigo.x += Math.sin(enemigo.contador * Math.PI / 90) * 5;
 
             //Funcion aleatoria que aroja un random de los disparos 
+            //Es rara porque si se aumenta mucho se convierte en un bullethell
 
             if (aleatorio(0, enemigos.length * 10) == 4) {
                 disparosEnemigos.push(agregarDisparosEnemigos(enemigo))
@@ -235,7 +236,7 @@ function nuevosEnemigos() {
 
         if (enemigo && enemigo.estado == 'hitBox') {
             enemigo.contador++;
-            if (enemigo.contador >= 10) {
+            if (enemigo.contador >= 20) {
                 enemigo.estado = 'muerto'
                 enemigo.contador = 0
             }
@@ -272,7 +273,7 @@ function moverDisparos() {
 //
 function fire() {
     disparos.push({
-        x: nave.x - 20,
+        x: nave.x + 20,
         y: nave.y - 10,
         width: 10,
         height: 30
@@ -295,7 +296,7 @@ function dibujarDisparos() {
 
 function dibujarTexto() {
     if (mensaje.contador == -1) return;
-
+//El alfa ayuuda a que el texto simule un difuminado 
     let alpha = mensaje.contador / 50.0
 
     if (alpha > 1) {
@@ -304,21 +305,22 @@ function dibujarTexto() {
         }
     }
     ctx.save()
-    ctx.globalAlpha = alpha
+//https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/globalAlpha    
+    ctx.globalAlpha = alpha;
     if (game.estado == 'perdido') {
         ctx.fillStyle = 'white'
-        ctx.font = 'bold 50pt Arial';
-        ctx.fillText(mensaje.titulo, 140, 200)
-        ctx.font = ' 30pt Arial';
-        ctx.fillText(mensaje.subtitulo, 140, 250)
+        ctx.font = '50pt Arial';
+        ctx.fillText(mensaje.titulo, 150, 250)
+        ctx.font = ' 20pt Arial';
+        ctx.fillText(mensaje.subtitulo, 200, 350)
     }
 
     if (game.estado == 'victoria') {
         ctx.fillStyle = 'white'
         ctx.font = '50pt Arial-Black';
-        ctx.fillText(mensaje.titulo, 140, 200)
+        ctx.fillText(mensaje.titulo, 150, 250)
         ctx.font = ' 30pt Arial';
-        ctx.fillText(mensaje.subtitulo, 140, 250)
+        ctx.fillText(mensaje.subtitulo, 200, 350)
     }
 
 
@@ -329,7 +331,7 @@ function estadoDelJuego() {
     if (game.estado == 'jugando' && enemigos.length == 0) {
 
         game.estado = 'victoria'
-        mensaje.titulo = "Destruiste la flota del MAL"
+        mensaje.titulo = "Destruiste la Flota"
         mensaje.subtitulo = "Press R"
         mensaje.contador = 0;
     }
@@ -346,18 +348,11 @@ function estadoDelJuego() {
 
 
 function hitBox(a, b) {
-    let hitBox = false
+    let hitBox = false;
 
-    //     if( a.x < a.x + a.width &&
-    //         a.x + a.width > a.x &&
-
-    //         b.y < b.y + b.height &&
-    //         b.height + b.y > b.y
-    //     ){
-    //             console.log("colicion")
-    //             return hitBox
-    //     }
-
+    //     if( a.x < a.x + a.width &&a.x + a.width > a.x &&b.y < b.y + b.height &&b.height + b.y > b.y  console.log("colicion")
+    //   return hitBox
+   
     //col vertical
     if (b.x + b.width >= a.x && b.x < a.x + a.width) {
         //coll horizontal  
@@ -374,9 +369,10 @@ function hitBox(a, b) {
     }
 
     if (a.x <= b.x && a.x + a.width >= b.x + b.width) {
-        if (a.y <= b.y && a.y + a.height >= b.y + b.height) {}
-
+        if (a.y <= b.y && a.y + a.height >= b.y + b.height) {
+        hitBox = true
     }
+}
 
     return hitBox
 
@@ -403,18 +399,18 @@ function verificarContacto() {
 
     }
 
-    if (nave.estado == "hitBox" || nave.estado == "muerto") return
+    if (nave.estado == "hitBox" || nave.estado == "muerto") {return;}
     for (let i in disparosEnemigos) {
         let disparo = disparosEnemigos[i];
         if (hitBox(disparo, nave)) {
             nave.estado = "hitBox";
-
+            
         }
     }
 
 }
 
-
+//Esta la encontre en un foro 
 function aleatorio(inferior, superior) {
 
     let disparoPosible = superior - inferior
@@ -426,8 +422,8 @@ function aleatorio(inferior, superior) {
 function frameLoop() {
     estadoDelJuego();
     moverNave();
-    moverDisparosEnemigos();
     moverDisparos();
+    moverDisparosEnemigos();
     dibujarFondo();
     verificarContacto();
     nuevosEnemigos();
