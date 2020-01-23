@@ -46,15 +46,25 @@ let musicDisparo;
 let musicDisparoEnemigo;
 let musicInicio;
 let musicEnd;
+<<<<<<< HEAD
 let musicEndEnemi;
+=======
+>>>>>>> 28953049a74b56cf4487c0c72d632f283d9a07c1
 
 let preloader;
 
 function loadMedia(){
+<<<<<<< HEAD
    
     preloader = new PreloadJS();
     preloader.onProgress = progresoCarga;
     cargar()
+=======
+    preloader = new PreloadJS();
+preloader.onProgress = progresoCarga;
+cargar()
+
+>>>>>>> 28953049a74b56cf4487c0c72d632f283d9a07c1
 }
 function cargar(){
     while(imagenes.length > 0){
@@ -64,6 +74,7 @@ function cargar(){
 }
 
 function progresoCarga(){
+<<<<<<< HEAD
     
 
    
@@ -99,6 +110,33 @@ function progresoCarga(){
         document.body.appendChild(musicEndEnemi);
         musicEndEnemi.setAttribute('src','./sonidos/muerteEnemigo.wav')
         
+=======
+    // console.log(parseInt(preloader.progress * 100)+"%")
+    // if(preloader.progress == 1){
+
+    
+        let interval = window.setInterval(frameLoop,1000/5)
+        fondo = new Image();
+        fondo.src ='./bg1.png'
+
+        navecita = new Image();
+        navecita.src ='./nave1.png'
+
+        enemigoNave = new Image();
+        enemigoNave.src ='./enemigo1.png'
+
+        rashoLaser = new Image();
+        rashoLaser.src ='./laser2.png'
+
+        rashoLaser2 = new Image();
+        rashoLaser2.src ='./laserEnemigo.png'
+
+        musicDisparo = document.createElement('audio')
+        document.body.appendChild(musicDisparo);
+        musicDisparo.setAttribute('src','sonidoDisparo')
+
+
+>>>>>>> 28953049a74b56cf4487c0c72d632f283d9a07c1
 
 
     //}
@@ -173,14 +211,14 @@ function agregarEventosTeclado() {
 
 
 function moverNave() {
-    if (teclado[37]) {
+    if (teclado[65]) {
         //move left
         nave.x -= 6;
 
         if (nave.x < 0) nave.x = 0
     }
 
-    if (teclado[39]) {
+    if (teclado[68]) {
         //mov rigth
         let limite = canvas.width - nave.width;
         nave.x += 6;
@@ -190,12 +228,16 @@ function moverNave() {
         }
     }
 
-    if (teclado[32]) {
+    if (teclado[87]) {
         //Los disparo estan bien locos si se tocaba una vez la barra troanaba
         if (!teclado.fire) {
             fire()
             teclado.fire = true
+<<<<<<< HEAD
         }
+=======
+        } 
+>>>>>>> 28953049a74b56cf4487c0c72d632f283d9a07c1
     }    
 
     else teclado.fire = false;
@@ -283,15 +325,23 @@ function nuevosEnemigos() {
             enemigo.contador++;
             enemigo.x += Math.sin(enemigo.contador * Math.PI / 90) * 5;
 
+<<<<<<< HEAD
             //Funcion aleatoria que aroja un random de los disparos
+=======
+            //Funcion aleatoria que aroja un random de los disparos 
+>>>>>>> 28953049a74b56cf4487c0c72d632f283d9a07c1
             //Es rara porque si se aumenta mucho se convierte en un bullethell
 
             if (aleatorio(0, enemigos.length * 10) == 4) {
 
 //Falta agregar de igual forma y buscar un audio para el disparo del enemigo                
+<<<<<<< HEAD
             musicDisparoEnemigo.pause();
             musicDisparoEnemigo.currentTime = 0;
             musicDisparoEnemigo.play();
+=======
+
+>>>>>>> 28953049a74b56cf4487c0c72d632f283d9a07c1
 
                 disparosEnemigos.push(agregarDisparosEnemigos(enemigo))
             }
@@ -336,9 +386,15 @@ function moverDisparos() {
 //
 function fire() {
     //Falta agregar y buscar el sonidos
+<<<<<<< HEAD
      musicDisparo.pause();
      musicDisparo.currentTime = 0;
      musicDisparo.play();
+=======
+    // musicDisparo.pause();
+    // musicDisparo.currentTime = 0;
+    // musicDisparo.play();
+>>>>>>> 28953049a74b56cf4487c0c72d632f283d9a07c1
     disparos.push({
         x: nave.x + 20,
         y: nave.y - 10,
@@ -363,7 +419,11 @@ function dibujarDisparos() {
 
 function dibujarTexto() {
     if (mensaje.contador == -1) return;
+<<<<<<< HEAD
 //El alfa ayuuda a que el texto simule un difuminado
+=======
+//El alfa ayuuda a que el texto simule un difuminado 
+>>>>>>> 28953049a74b56cf4487c0c72d632f283d9a07c1
     let alpha = mensaje.contador / 50.0
 
     if (alpha > 1) {
@@ -458,6 +518,7 @@ function verificarContacto() {
         for (j in enemigos) {
             let enemigo = enemigos[j];
             if (hitBox(disparo, enemigo)) {
+<<<<<<< HEAD
                
                 
                 musicEndEnemi.currentTime = 0;
@@ -465,6 +526,11 @@ function verificarContacto() {
                 
             
                
+=======
+                
+//De igual forma falta agregar el auidio de colision con el enemigo                
+                
+>>>>>>> 28953049a74b56cf4487c0c72d632f283d9a07c1
                 enemigo.estado = 'hitBox'
                 enemigo.contador = 0;
                 console.log('contato cn el pinche nave espero que ahora si')
@@ -478,6 +544,7 @@ function verificarContacto() {
         let disparo = disparosEnemigos[i];
         if (hitBox(disparo, nave)) {
 
+<<<<<<< HEAD
             musicEnd.currentTime = 0;
             musicEnd.play();
 
@@ -485,12 +552,22 @@ function verificarContacto() {
 //Falta agregar el sonido de la nave muriendo            
             nave.estado = "hitBox";
            
+=======
+
+//Falta agregar el sonido de la nave muriendo            
+            nave.estado = "hitBox";
+            
+>>>>>>> 28953049a74b56cf4487c0c72d632f283d9a07c1
         }
     }
 
 }
 
+<<<<<<< HEAD
 //Esta la encontre en un foro
+=======
+//Esta la encontre en un foro 
+>>>>>>> 28953049a74b56cf4487c0c72d632f283d9a07c1
 function aleatorio(inferior, superior) {
 
     let disparoPosible = superior - inferior
