@@ -22,6 +22,11 @@ let mensaje = {
     subtitulo: ''
 }
 
+let navecita;
+let enemigoNave;
+let rashoLaser;
+let rashoLaser2;
+
 //Definir el movimiento por teclado sin ningun parametro
 let teclado = {}
 
@@ -36,15 +41,56 @@ let enemigos = []
 //Instancia un nuevo fondo el cual pasa a cargar la imagen
 
 let fondo;
-//let imagenes = ['./nave1.png', './enemigo1.png', './enemigo2.png', './bg1.png', './laser.png', './laser2.png']
+let imagenes = ['./nave1.png', './enemigo1.png', './enemigo2.png', './bg1.png', './laser.png', './laser2.png']
+let musicDisparo;
+let musicDisparoEnemigo;
+let musicInicio;
+let musicEnd;
+
 let preloader;
 
 function loadMedia(){
-    fondo = new Image()
-    fondo.src = './bg1.png';
-    fondo.onload = function(){
-        let intervalo = window.setInterval(frameLoop,1000/55)
+    preloader = new PreloadJS();
+preloader.onProgress = progresoCarga;
+cargar()
+
+}
+function cargar(){
+    while(imagenes.length > 0){
+        let imagen = imagenes.shift();
+        preloader.loadFile(imagen);
     }
+}
+
+function progresoCarga(){
+    // console.log(parseInt(preloader.progress * 100)+"%")
+    // if(preloader.progress == 1){
+
+    
+        let interval = window.setInterval(frameLoop,1000/5)
+        fondo = new Image();
+        fondo.src ='./bg1.png'
+
+        navecita = new Image();
+        navecita.src ='./nave1.png'
+
+        enemigoNave = new Image();
+        enemigoNave.src ='./enemigo1.png'
+
+        rashoLaser = new Image();
+        rashoLaser.src ='./laser2.png'
+
+        rashoLaser2 = new Image();
+        rashoLaser2.src ='./laserEnemigo.png'
+
+        musicDisparo = document.createElement('audio')
+        document.body.appendChild(musicDisparo);
+        musicDisparo.setAttribute('src','sonidoDisparo')
+
+
+
+
+    //}
 }
 
 
@@ -61,7 +107,7 @@ function enemigosDibujados() {
         if (enemigo.estado == "muerto") {
             ctx.fillStyle = "orange"
         }
-        ctx.fillRect(enemigo.x, enemigo.y, enemigo.width, enemigo.height)
+        ctx.drawImage(enemigoNave,enemigo.x, enemigo.y, enemigo.width, enemigo.height)
     }
 }
 
@@ -78,8 +124,8 @@ function dibujarFondo() {
 
 function dibujarNave() {
     ctx.save();
-    ctx.fillStyle = "white"
-    ctx.fillRect(nave.x, nave.y, nave.width, nave.height)
+    //Cuadrotp guia ctx.fillStyle = "white"
+    ctx.drawImage(navecita,nave.x, nave.y, nave.width, nave.height)
     ctx.restore()
 }
 
@@ -164,7 +210,7 @@ function dibujarDisparosEnemigos() {
         let disparo = disparosEnemigos[i];
         ctx.save();
         ctx.fillStyle = "blue "
-        ctx.fillRect(disparo.x, disparo.y, disparo.width, disparo.height)
+        ctx.drawImage(rashoLaser2,disparo.x, disparo.y, disparo.width, disparo.height)
         ctx.restore()
 
     }
@@ -230,6 +276,10 @@ function nuevosEnemigos() {
             //Es rara porque si se aumenta mucho se convierte en un bullethell
 
             if (aleatorio(0, enemigos.length * 10) == 4) {
+
+//Falta agregar de igual forma y buscar un audio para el disparo del enemigo                
+
+
                 disparosEnemigos.push(agregarDisparosEnemigos(enemigo))
             }
         }
@@ -272,6 +322,10 @@ function moverDisparos() {
 //Si disparo persiste saliendo del Eje y puede ocacionar una sobre carga ya que el elemento aun seguiriai ejecutandose
 //
 function fire() {
+    //Falta agregar y buscar el sonidos
+    // musicDisparo.pause();
+    // musicDisparo.currentTime = 0;
+    // musicDisparo.play();
     disparos.push({
         x: nave.x + 20,
         y: nave.y - 10,
@@ -288,7 +342,7 @@ function dibujarDisparos() {
     ctx.fillStyle = "white"
     for (let i in disparos) {
         let disparo = disparos[i]
-        ctx.fillRect(disparo.x, disparo.y, disparo.width, disparo.height)
+        ctx.drawImage(rashoLaser,disparo.x, disparo.y, disparo.width, disparo.height)
     }
 
     ctx.restore();
@@ -391,6 +445,9 @@ function verificarContacto() {
         for (j in enemigos) {
             let enemigo = enemigos[j];
             if (hitBox(disparo, enemigo)) {
+                
+//De igual forma falta agregar el auidio de colision con el enemigo                
+                
                 enemigo.estado = 'hitBox'
                 enemigo.contador = 0;
                 console.log('contato con el pinche nave espero que ahora si')
@@ -403,6 +460,9 @@ function verificarContacto() {
     for (let i in disparosEnemigos) {
         let disparo = disparosEnemigos[i];
         if (hitBox(disparo, nave)) {
+
+
+//Falta agregar el sonido de la nave muriendo            
             nave.estado = "hitBox";
             
         }
@@ -441,7 +501,6 @@ function frameLoop() {
     
 window.addEventListener('load',init) 
 function init() {
-        loadMedia();
         agregarEventosTeclado();
-
+        loadMedia();
     }
